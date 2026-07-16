@@ -1,4 +1,3 @@
-
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO bbalouki/itchcpp
@@ -7,6 +6,7 @@ vcpkg_from_github(
     HEAD_REF main
     PATCHES
         fix-cmake-package.patch
+        fix-python-feature.patch
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
@@ -15,10 +15,21 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
         python ITCH_BUILD_PYTHON
 )
 
+set(PYTHON_OPTIONS)
+if("python" IN_LIST FEATURES)
+    vcpkg_get_vcpkg_installed_python(PYTHON3)
+    list(APPEND PYTHON_OPTIONS
+        -DPYBIND11_FINDPYTHON=ON
+        "-DPython_EXECUTABLE=${PYTHON3}"
+        "-DITCH_PYTHON_INSTALL_DIR=${PYTHON3_SITE}/itchcpp"
+    )
+endif()
+
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
         ${FEATURE_OPTIONS}
+        ${PYTHON_OPTIONS}
         -DITCH_BUILD_TESTS=OFF
         -DITCH_BUILD_BENCHMARKS=OFF
         -DITCH_BUILD_EXAMPLES=OFF

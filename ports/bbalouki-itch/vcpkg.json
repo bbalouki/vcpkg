@@ -31,7 +31,8 @@
     "python": {
       "description": "Build the pybind11 Python bindings",
       "dependencies": [
-        "pybind11"
+        "pybind11",
+        "python3"
       ]
     }
   }
